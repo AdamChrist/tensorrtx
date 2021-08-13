@@ -263,10 +263,11 @@ void doInference(IExecutionContext& context, cudaStream_t& stream, void **buffer
 
 bool parse_args(int argc, char** argv, std::string& wts, std::string& engine, bool& is_p6, float& gd, float& gw, std::string& img_dir) {
     if (argc < 4) return false;
-    if (std::string(argv[1]) == "-s" && (argc == 5 || argc == 7)) {
+    if (std::string(argv[1]) == "-s" && (argc == 6 || argc == 8)) {
         wts = std::string(argv[2]);
         engine = std::string(argv[3]);
         auto net = std::string(argv[4]);
+        Yolo::CLASS_NUM = atof(argv[5]);
         if (net[0] == 's') {
             gd = 0.33;
             gw = 0.50;
@@ -282,12 +283,14 @@ bool parse_args(int argc, char** argv, std::string& wts, std::string& engine, bo
         } else if (net[0] == 'c' && argc == 7) {
             gd = atof(argv[5]);
             gw = atof(argv[6]);
+            Yolo::CLASS_NUM = atof(argv[7]);
         } else {
             return false;
         }
         if (net.size() == 2 && net[1] == '6') {
             is_p6 = true;
         }
+        std::cout << "Class Num: " << Yolo::CLASS_NUM << std::endl;
     } else if (std::string(argv[1]) == "-d" && argc == 4) {
         engine = std::string(argv[2]);
         img_dir = std::string(argv[3]);
